@@ -1,0 +1,232 @@
+name: rdn_workflow
+
+python_env: python_env.yaml
+
+entry_points:
+  main:
+    parameters:
+      stages: {type: str, default: 'all'}
+      dir_in: {type: str, default: '../original_data/'}
+      local_tz: {type: bool, default: False}
+      src_countries: {type: str, default: 'Portugal'}
+      tgt_countries: {type: str, default: 'Portugal'}
+      seed: {type: str, default: '42'}
+      train_years: {type: str, default: '2015,2016,2017,2018,2019'}
+      val_years: {type: str, default: '2020'}
+      test_years: {type: str, default: '2021'}
+      n_trials: {type: str, default: '100'}
+      max_epochs: {type: str, default: '500'}
+      n_layers: {type: str, default: '1'}
+      layer_sizes: {type: str, default: "100"}
+      l_window: {type: str, default: '240'}
+      f_horizon: {type: str, default: '24'}
+      l_rate: {type: str, default: '0.0001'}
+      activation: {type: str, default: 'ReLU'}
+      optimizer_name: {type: str, default: 'Adam'}
+      batch_size: {type: str, default: '1024'}
+      transfer_mode: {type: str, default: "0"}
+      num_workers: {type: str, default: '2'}
+      tl_model_uri: {type: str, default: 'None'}
+      n_estimators: {type: str, default: '3'}
+      test_case: {type: str, default: '1'}
+    command: "python main.py \
+              --stages {stages} \
+              --dir_in {dir_in} \
+              --local_tz {local_tz} \
+              --src_countries {src_countries} \
+              --tgt_countries {tgt_countries} \
+              --seed {seed} \
+              --train_years {train_years} \
+              --val_years {val_years} \
+              --test_years {test_years} \
+              --n_trials {n_trials} \
+              --max_epochs {max_epochs} \
+              --n_layers {n_layers} \
+              --layer_sizes {layer_sizes} \
+              --l_window {l_window} \
+              --f_horizon {f_horizon} \
+              --l_rate {l_rate} \
+              --activation {activation} \
+              --optimizer_name {optimizer_name} \
+              --batch_size {batch_size} \
+              --transfer_mode {transfer_mode} \
+              --num_workers {num_workers} \
+              --tl_model_uri {tl_model_uri} \
+              --n_estimators {n_estimators} \
+              --test_case {test_case} "  
+
+  load:
+      parameters:
+        dir_in: {type: str, default: '../original_data/'}
+        countries: {type: str, default: 'Portugal'}
+      command: "python load_raw_data.py \
+                --countries {countries} \
+                --dir_in {dir_in}"
+
+  etl:
+    parameters:
+      dir_in: {type: str, default: '../original_data/'}
+      local_tz: {type: bool, default: False}
+      countries: {type: str, default: 'Portugal'}
+    command: "python etl.py \
+              --dir_in {dir_in} \
+              --countries {countries} \
+              --local_tz {local_tz} "
+
+  optuna:
+    parameters:
+      dir_in: {type: str, default: '../preprocessed_data/'}
+      seed: {type: str, default: '42'}
+      train_years: {type: str, default: '2015,2016,2017,2018,2019'}
+      val_years: {type: str, default: '2020'}
+      test_years: {type: str, default: '2021'}      
+      n_trials: {type: str, default: '100'}
+      countries: {type: str, default: 'Portugal'}
+      max_epochs: {type: str, default: '500'}
+      n_layers: {type: str, default: '2,6'}
+      layer_sizes: {type: str, default: "128,256,512,1024,2048"}
+      l_window: {type: str, default: '168,336,504,672'}
+      l_rate: {type: str, default: '0.0001,0.001'}
+      activation: {type: str, default: 'ReLU'}
+      optimizer_name: {type: str, default: 'Adam'}      
+      batch_size: {type: str, default: '256,512,1024'}
+      num_workers: {type: str, default: '2'}
+    command: "python forecasting_model_optuna.py \
+              --dir_in {dir_in} \
+              --seed {seed} \
+              --train_years {train_years} \
+              --val_years {val_years} \
+              --test_years {test_years} \
+              --n_trials {n_trials} \
+              --countries {countries} \
+              --max_epochs {max_epochs} \
+              --n_layers {n_layers} \
+              --layer_sizes {layer_sizes} \
+              --l_window {l_window} \
+              --l_rate {l_rate} \
+              --activation {activation} \
+              --optimizer_name {optimizer_name} \
+              --num_workers {num_workers} \              
+              --batch_size {batch_size} "
+
+  model:
+    parameters:
+      dir_in: {type: str, default: '../preprocessed_data/'}
+      countries: {type: str, default: 'Portugal'}
+      seed: {type: str, default: '42'}
+      train_years: {type: str, default: '2015,2016,2017,2018,2019'}
+      val_years: {type: str, default: '2020'}
+      test_years: {type: str, default: '2021'}      
+      max_epochs: {type: str, default: '500'}
+      n_layers: {type: str, default: '1'}
+      layer_sizes: {type: str, default: "100"}
+      l_window: {type: str, default: '240'}
+      f_horizon: {type: str, default: '24'}
+      l_rate: {type: str, default: '0.0001'}
+      activation: {type: str, default: 'ReLU'}
+      optimizer_name: {type: str, default: 'Adam'}
+      batch_size: {type: str, default: '1024'}
+      transfer_mode: {type: str, default: "0"}
+      tl_model_uri: {type: str, default: 'None'}
+      num_workers: {type: str, default: "2"}
+      time_steps: {type: str, default: '168'}
+    command: "python forecasting_model.py \
+              --dir_in {dir_in} \
+              --countries {countries} \
+              --seed {seed} \
+              --train_years {train_years} \
+              --val_years {val_years} \
+              --test_years {test_years} \
+              --max_epochs {max_epochs} \
+              --n_layers {n_layers} \
+              --layer_sizes {layer_sizes} \
+              --l_window {l_window} \
+              --f_horizon {f_horizon} \
+              --l_rate {l_rate} \
+              --activation {activation} \
+              --optimizer_name {optimizer_name} \
+              --batch_size {batch_size} \
+              --num_workers {num_workers} \
+              --tl_model_uri {tl_model_uri} \
+              --transfer_mode {transfer_mode} \
+              --time_steps {time_steps} "
+
+  ensemble:
+    parameters:
+      dir_in: {type: str, default: '../preprocessed_data/'}
+      countries: {type: str, default: 'Portugal'}
+      seed: {type: str, default: '42'}
+      train_years: {type: str, default: '2015,2016,2017,2018,2019'}
+      val_years: {type: str, default: '2020'}
+      test_years: {type: str, default: '2021'}
+      max_epochs: {type: str, default: '500'}
+      n_layers: {type: str, default: '1'}
+      layer_sizes: {type: str, default: "100"}
+      l_window: {type: str, default: '240'}
+      f_horizon: {type: str, default: '24'}
+      l_rate: {type: str, default: '0.0001'}
+      activation: {type: str, default: 'ReLU'}
+      optimizer_name: {type: str, default: 'Adam'}
+      batch_size: {type: str, default: '1024'}
+      transfer_mode: {type: str, default: "0"}
+      n_estimators: {type: str, default: '3'}
+      num_workers: {type: str, default: '2'}
+      time_steps: {type: str, default: '168'}
+    command: "python forecasting_model_ensemble.py \
+              --dir_in {dir_in} \
+              --countries {countries} \
+              --seed {seed} \
+              --train_years {train_years} \
+              --val_years {val_years} \
+              --test_years {test_years} \              
+              --max_epochs {max_epochs} \
+              --n_layers {n_layers} \
+              --layer_sizes {layer_sizes} \
+              --l_window {l_window} \
+              --f_horizon {f_horizon} \
+              --l_rate {l_rate} \
+              --activation {activation} \
+              --optimizer_name {optimizer_name} \
+              --batch_size {batch_size} \
+              --transfer_mode {transfer_mode} \
+              --num_workers {num_workers} \
+              --n_estimators {n_estimators} \
+              --time_steps {time_steps} "
+  
+  eval:
+    parameters:
+      dir_in: {type: str, default: '../preprocessed_data/'}
+      countries: {type: str, default: 'Portugal'}
+      test_years: {type: str, default: '2021'}
+      l_window: {type: str, default: '240'}
+      f_horizon: {type: str, default: '24'}
+      transfer_mode: {type: str, default: "0"}
+      model_uri: {type: str, default: 'None'}
+      time_steps: {type: str, default: '168'}
+    command: "python forecasting_model_eval.py \
+              --dir_in {dir_in} \
+              --countries {countries} \
+              --test_years {test_years} \              
+              --l_window {l_window} \
+              --f_horizon {f_horizon} \
+              --transfer_mode {transfer_mode} \
+              --model_uri {model_uri} \
+              --time_steps {time_steps} "
+  
+  snaive:
+    parameters:
+      dir_in: {type: str, default: '../preprocessed_data/'}
+      countries: {type: str, default: 'Portugal'}
+      tgt_country: {type: str, default: 'Portugal'}
+      train_years: {type: str, default: '2015,2016,2017,2018,2019'}
+      val_years: {type: str, default: '2020'}
+      test_years: {type: str, default: '2021'}      
+      time_steps: {type: str, default: '168'}
+    command: "python forecasting_model_naive.py \
+              --dir_in {dir_in} \
+              --countries {countries} \
+              --tgt_country {tgt_country} \
+              --train_years {train_years} \
+              --val_years {val_years} \
+              --test_years {test_years} \
+              --time_steps {time_steps} "
