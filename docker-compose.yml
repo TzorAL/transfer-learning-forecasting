@@ -1,0 +1,16 @@
+version: '3'
+services:
+  leif:
+      container_name: leif-service
+      restart: always
+      image: python:3.8
+      ports:
+        - "8888:8888"
+      build: .
+      expose:
+        - "8888"
+      volumes:
+        - ./:/leif_app/code # local dir is translate to leif_app/code in image file system
+      
+      # uvicorn api:app --host 0.0.0.0 --port 8888 --reload
+      # sudo docker compose up --build  --remove-orphans
