@@ -1,5 +1,4 @@
 # add the following to _config.yml file
-title: TzorAL
 #description: text below image
 show_downloads: true
-theme: jekyll-theme-slate
+theme: jekyll-theme-cayman
