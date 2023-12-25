@@ -1,6 +1,6 @@
 # transfer-learning-forecasting
 
-The repository for load forecasting through Transfer Learning techniques as part of the paper [Transfer Learning for Day-Ahead Load Forecasting: A Case Study on European National Electricity Demand Time Series](https://www.mdpi.com/2227-7390/12/1/19).
+This is the github repository for our research paper on "Transfer Learning for Day-Ahead Load Forecasting: A Case Study on European National Electricity Demand Time Series." (see more details [here](https://www.mdpi.com/2227-7390/12/1/19)). This repository serves as a comprehensive resource for the code and experiments conducted as part of our study.
 
 ## Installation
 
