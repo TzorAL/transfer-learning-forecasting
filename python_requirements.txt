@@ -17,16 +17,16 @@ optuna==2.10.0
 plotly==5.10.0 # for optuna visualization plots
 seaborn==0.11.2
 # scipy==1.6.0
-scikit-learn==1.1.2
+scikit-learn==1.5.0
 protobuf==3.19.4
 statsmodels==0.13.2
 # pickle==4.0
 torchensemble==0.1.9
 python-dotenv==0.21.0
-tornado==6.2 # for webagg on optuna viz (not necessary for non-GUI env)
+tornado==6.4.1 # for webagg on optuna viz (not necessary for non-GUI env)
 boto3==1.26.29 #remote storage of minio
 uvicorn==0.24.0.post1
 xgboost==2.0.0
-fastapi==0.104.1
+fastapi==0.109.1
 # psutil==5.9.6
 # nvsmi==0.4.2
